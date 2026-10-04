@@ -1,0 +1,11 @@
+[
+  {
+    "name": "DJ Mix",
+    "description": "Order any playlist like a DJ set: harmonic mixing on the Camelot wheel, an energy arc and smooth tempo steps. Creates a new playlist, the original stays untouched.",
+    "preview": "assets/cover.png",
+    "main": "dj-mix.js",
+    "readme": "README.md",
+    "authors": [{ "name": "smixs", "url": "https://github.com/smixs" }],
+    "tags": ["dj", "mix", "harmonic mixing", "camelot", "key", "bpm", "energy", "sort", "playlist", "tempo"]
+  }
+]
