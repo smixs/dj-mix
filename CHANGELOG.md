@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0 — 2026-10-04
+
+- "Year" column in every playlist: the release year of each track, right before the duration. Tracks from Spotify's "Recommended" block under a playlist have no year, because they are not in the playlist.
+
 ## 1.0.0 — 2026-10-04
 
 - "DJ Mix" in the playlist context menu.

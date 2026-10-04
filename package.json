@@ -1,8 +1,11 @@
 {
   "name": "dj-mix",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Spicetify extension that orders a Spotify playlist like a DJ set: harmonic mixing on the Camelot wheel, an energy arc and smooth tempo steps.",
   "homepage": "https://github.com/smixs/dj-mix",
   "license": "MIT",
-  "scripts": { "build": "bun build.ts", "test": "bun test" }
+  "scripts": {
+    "build": "bun build.ts",
+    "test": "bun test"
+  }
 }

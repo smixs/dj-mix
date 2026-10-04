@@ -6,7 +6,7 @@
 
 **Turn any Spotify playlist into a DJ set in one click.**
 
-A [Spicetify](https://spicetify.app) extension that reorders a playlist the way a DJ would: compatible keys on the Camelot wheel, an energy arc with two waves, small tempo steps. It uses the same keys and BPM Spotify shows in its own Mix mode, runs locally in seconds and saves the result as a new playlist, so the original never changes.
+A [Spicetify](https://spicetify.app) extension that reorders a playlist the way a DJ would: compatible keys on the Camelot wheel, an energy arc with two waves, small tempo steps. It uses the same keys and BPM Spotify shows in its own Mix mode, runs locally in seconds and saves the result as a new playlist, so the original never changes. It also adds a **Year** column with each track's release year to every playlist.
 
 <p>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-22c55e?style=flat-square" alt="MIT"></a>
@@ -42,6 +42,12 @@ flowchart LR
 ![DJ Mix in the playlist context menu](assets/screenshot-menu.webp)
 
 ![The new DJ Mix playlist and the done notification](assets/screenshot-result.webp)
+
+## Year column
+
+Every playlist gets a **Year** column before the duration: the release year Spotify has for each track. Handy for digging and for building sets by era.
+
+![The Year column in a playlist](assets/screenshot-year.webp)
 
 ## Install
 
