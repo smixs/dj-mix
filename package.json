@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "bun build.ts",
-    "test": "bun test"
+    "test": "bun test",
+    "purge": "for f in dj-mix.js manifest.json README.md assets/cover.png; do curl -s https://purge.jsdelivr.net/gh/smixs/dj-mix@main/$f >/dev/null; done; echo purged"
   }
 }

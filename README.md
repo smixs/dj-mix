@@ -77,7 +77,7 @@ Right-click a playlist (or press `⋯`), choose **DJ Mix**. A new playlist **DJ 
 
 ## Develop
 
-`bun test` runs the rules tests, `bun build.ts` bundles `src/` into `dj-mix.js`. Details of the scoring: [docs/how-it-works.md](docs/how-it-works.md).
+`bun test` runs the rules tests, `bun build.ts` bundles `src/` into `dj-mix.js`. Marketplace loads extensions through jsDelivr, which caches `@main` for up to 12 hours: after a push run `bun run purge`. Details of the scoring: [docs/how-it-works.md](docs/how-it-works.md).
 
 ## Credits
 
