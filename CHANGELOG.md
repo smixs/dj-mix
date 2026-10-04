@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 — 2026-10-04
+
+- Click the "Year" header to sort your playlist by release year: first click oldest first, second click newest first. Spotify has no year sort for playlists, so DJ Mix reorders the playlist itself, one block per year; added dates and the order inside each year are kept. The view switches to Custom order. Only playlists you can edit.
+
 ## 1.1.2 — 2026-10-04
 
 - Year column stays in its place in Mix-mode playlists: when Spotify re-renders a row and inserts its cells after the year cell, the year cell moves back right before the duration.

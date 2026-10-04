@@ -1,4 +1,4 @@
-// DJ Mix v1.1.2 for Spicetify — https://github.com/smixs/dj-mix
+// DJ Mix v1.2.0 for Spicetify — https://github.com/smixs/dj-mix
 // Orders a playlist like a DJ set: Camelot key, energy arc, smooth tempo. MIT License.
 // DJ Mix core: the ordering rules, with no Spotify dependency.
 // Runs inside Spicetify (bundled into dj-mix.js) and under bun for tests.
@@ -258,6 +258,11 @@ const DJMixCore = (() => {
       const span = document.createElement("span");
       span.className = isHeader ? "dj-mix-year-head" : "dj-mix-year-text";
       cell.appendChild(span);
+      if (isHeader) {
+        cell.style.cursor = "pointer";
+        cell.title = "Sort this playlist by release year";
+        cell.addEventListener("click", () => sortByYear(playlistUri()));
+      }
       row.insertBefore(cell, end);
     }
     return cell;
@@ -302,6 +307,44 @@ const DJMixCore = (() => {
     if (misses && Date.now() - years.missesAt > 10000) { years.missesAt = Date.now(); years.uri = null; ensureYears(playlistUri()); }
   }
 
+  // Click on "Year": reorder the playlist itself by release year (Spotify has no year sort for playlists).
+  // Moves one block per year to the top, so tracks keep their added dates and their order inside a year.
+  const direction = new Map(); // playlist uri -> last direction
+  let sorting = false;
+  async function sortByYear(uri) {
+    if (!uri || sorting) return;
+    const say = (m, err) => Spicetify.showNotification(`DJ Mix: ${m}`, err);
+    try {
+      sorting = true;
+      const meta = await Platform.PlaylistAPI.getMetadata(uri);
+      if (!meta.canRemove) return say("only your own playlists can be sorted by year", true);
+      const asc = direction.get(uri) !== "asc";
+      direction.set(uri, asc ? "asc" : "desc");
+      const contents = await Platform.PlaylistAPI.getContents(uri, { offset: 0, limit: 10000 });
+      const groups = new Map();
+      for (const it of contents.items || []) {
+        if (!it.uri || !it.uid) continue;
+        const y = (it.release?.isoString || it.album?.releaseDate?.isoString || "").slice(0, 4) || "";
+        if (!groups.has(y)) groups.set(y, []);
+        groups.get(y).push({ uri: it.uri, uid: it.uid });
+      }
+      const years = [...groups.keys()].filter(Boolean).sort();
+      if (!asc) years.reverse();
+      const finalOrder = groups.has("") ? [...years, ""] : years; // tracks without a year go last
+      for (const y of finalOrder.reverse()) await Platform.PlaylistAPI.move(uri, groups.get(y), { before: "start" });
+      // Show the playlist in its own order ("Custom order"), not in a view sort like "Recently added"
+      const L = Platform.LocalStorageAPI;
+      const st = { ...(L?.getItem("sortedState") || {}) };
+      if (st[uri]) { delete st[uri]; L.setItem("sortedState", st); }
+      say(`sorted by year, ${asc ? "oldest" : "newest"} first`);
+    } catch (e) {
+      console.error("[DJ Mix] sort by year", e);
+      say(`could not sort by year: ${e.message}`, true);
+    } finally {
+      sorting = false;
+    }
+  }
+
   function clear() {
     document.querySelectorAll(".dj-mix-year").forEach((c) => c.remove());
     if (rules.size) { rules.clear(); writeRules(); }
@@ -324,6 +367,7 @@ const DJMixCore = (() => {
   }
   const BASE_CSS = `.dj-mix-year-text{color:var(--text-subdued,#a7a7a7);font-size:.875rem;font-variant-numeric:tabular-nums}
 .dj-mix-year-head{color:var(--text-subdued,#a7a7a7);font-size:.875rem}
+.dj-mix-year[role="columnheader"]:hover .dj-mix-year-head{color:var(--text-base,#fff)}
 .main-trackList-trackListRow:hover .dj-mix-year-text,.main-trackList-selected .dj-mix-year-text{color:var(--text-base,#fff)}
 `;
   const sheet = document.createElement("style");

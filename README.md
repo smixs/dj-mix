@@ -45,7 +45,7 @@ flowchart LR
 
 ## Year column
 
-Every playlist gets a **Year** column before the duration: the release year Spotify has for each track. Handy for digging and for building sets by era.
+Every playlist gets a **Year** column before the duration: the release year Spotify has for each track. Click the **Year** header to sort your playlist by year (oldest first, click again for newest first). Spotify has no year sort for playlists, so this reorders the playlist itself; added dates stay as they were.
 
 ![The Year column in a playlist](assets/screenshot-year.webp)
 
