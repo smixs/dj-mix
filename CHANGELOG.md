@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2 — 2026-10-04
+
+- Year column stays in its place in Mix-mode playlists: when Spotify re-renders a row and inserts its cells after the year cell, the year cell moves back right before the duration.
+
 ## 1.1.1 — 2026-10-04
 
 - Year column no longer jitters: the column layout is a stylesheet rule that survives Spotify re-rendering rows, and missing cells are restored before the next frame is painted.

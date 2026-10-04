@@ -1,4 +1,4 @@
-// DJ Mix v1.1.1 for Spicetify — https://github.com/smixs/dj-mix
+// DJ Mix v1.1.2 for Spicetify — https://github.com/smixs/dj-mix
 // Orders a playlist like a DJ set: Camelot key, energy arc, smooth tempo. MIT License.
 // DJ Mix core: the ordering rules, with no Spotify dependency.
 // Runs inside Spicetify (bundled into dj-mix.js) and under bun for tests.
@@ -245,10 +245,12 @@ const DJMixCore = (() => {
   }
 
   function addCell(row, isHeader) {
+    const end = row.querySelector(":scope > .main-trackList-rowSectionEnd");
+    if (!end) return null;
     let cell = row.querySelector(":scope > .dj-mix-year");
+    // Spotify may insert its own cells after ours when it re-renders a row: keep ours right before the duration
+    if (cell && cell.nextElementSibling !== end) row.insertBefore(cell, end);
     if (!cell) {
-      const end = row.querySelector(":scope > .main-trackList-rowSectionEnd");
-      if (!end) return null;
       cell = document.createElement("div");
       cell.className = "main-trackList-rowSectionVariable dj-mix-year";
       cell.setAttribute("role", isHeader ? "columnheader" : "gridcell");

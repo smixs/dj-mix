@@ -57,10 +57,12 @@
   }
 
   function addCell(row, isHeader) {
+    const end = row.querySelector(":scope > .main-trackList-rowSectionEnd");
+    if (!end) return null;
     let cell = row.querySelector(":scope > .dj-mix-year");
+    // Spotify may insert its own cells after ours when it re-renders a row: keep ours right before the duration
+    if (cell && cell.nextElementSibling !== end) row.insertBefore(cell, end);
     if (!cell) {
-      const end = row.querySelector(":scope > .main-trackList-rowSectionEnd");
-      if (!end) return null;
       cell = document.createElement("div");
       cell.className = "main-trackList-rowSectionVariable dj-mix-year";
       cell.setAttribute("role", isHeader ? "columnheader" : "gridcell");
