@@ -73,25 +73,31 @@
     return cell;
   }
 
+  // One stylesheet rule per track list. Spotify re-renders rows and resets inline styles; a rule survives that.
+  const rules = new Map(); // grid id -> css
+  let gridSeq = 0;
+  function writeRules() {
+    sheet.textContent = BASE_CSS + [...rules].map(([id, css]) =>
+      `[data-dj-mix-grid="${id}"] :is(.main-trackList-trackListHeaderRow,.main-trackList-trackListRow){grid-template-columns:${css}!important}`).join("\n");
+  }
+
   function apply(grid, force) {
     const header = grid.querySelector(".main-trackList-trackListHeaderRow");
     if (!header) return;
+    const id = grid.dataset.djMixGrid || (grid.dataset.djMixGrid = String(++gridSeq));
     const count = nativeCells(header).length;
-    if (force || grid.dataset.djMixYearKey !== String(count)) {
+    if (force || grid.dataset.djMixYearKey !== String(count) || !rules.has(id)) {
       const t = templateFor(header);
       if (!t) return;
       grid.dataset.djMixYearKey = String(t.key);
-      grid.dataset.djMixYearCss = t.css;
+      if (rules.get(id) !== t.css) { rules.set(id, t.css); writeRules(); }
     }
-    const css = grid.dataset.djMixYearCss;
     const head = addCell(header, true);
-    if (head) head.firstChild.textContent = "Year";
-    header.style.gridTemplateColumns = css;
+    if (head && head.firstChild.textContent !== "Year") head.firstChild.textContent = "Year";
     let misses = 0;
     for (const row of grid.querySelectorAll(".main-trackList-trackListRow")) {
       const cell = addCell(row, false);
       if (!cell) continue;
-      row.style.gridTemplateColumns = css;
       const uri = row.dataset.djMixUri || (row.dataset.djMixUri = rowTrackUri(row) || "");
       const y = uri ? years.map.get(uri) : null;
       if (!y && uri && !years.loading) misses++;
@@ -107,14 +113,17 @@
   }
 
   function clear() {
-    document.querySelectorAll(".dj-mix-year").forEach((c) => {
-      const row = c.parentElement; c.remove();
-      if (row) row.style.gridTemplateColumns = "";
-    });
+    document.querySelectorAll(".dj-mix-year").forEach((c) => c.remove());
+    if (rules.size) { rules.clear(); writeRules(); }
   }
 
-  let timer = null;
+  let timer = null, busy = false;
   function refresh(force) {
+    if (busy) return;
+    busy = true;
+    try { refreshNow(force); } finally { busy = false; }
+  }
+  function refreshNow(force) {
     const uri = playlistUri();
     if (!uri) return clear();
     ensureYears(uri);
@@ -123,14 +132,24 @@
       if (grid) apply(grid, force);
     });
   }
-  const schedule = () => { clearTimeout(timer); timer = setTimeout(() => refresh(false), 120); };
-
-  const style = document.createElement("style");
-  style.textContent = `.dj-mix-year-text{color:var(--text-subdued,#a7a7a7);font-size:.875rem;font-variant-numeric:tabular-nums}
+  const BASE_CSS = `.dj-mix-year-text{color:var(--text-subdued,#a7a7a7);font-size:.875rem;font-variant-numeric:tabular-nums}
 .dj-mix-year-head{color:var(--text-subdued,#a7a7a7);font-size:.875rem}
-.main-trackList-trackListRow:hover .dj-mix-year-text,.main-trackList-selected .dj-mix-year-text{color:var(--text-base,#fff)}`;
-  document.head.appendChild(style);
-  new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
+.main-trackList-trackListRow:hover .dj-mix-year-text,.main-trackList-selected .dj-mix-year-text{color:var(--text-base,#fff)}
+`;
+  const sheet = document.createElement("style");
+  sheet.textContent = BASE_CSS;
+  document.head.appendChild(sheet);
+  // Only react to changes inside track lists; ignore our own year cells
+  new MutationObserver((muts) => {
+    for (const m of muts) {
+      const t = m.target;
+      if (t.nodeType !== 1 || t.closest?.(".dj-mix-year")) continue;
+      if (t.closest?.('[role="grid"]') || [...m.addedNodes].some((n) => n.nodeType === 1 && (n.matches?.('[role="grid"], .main-trackList-trackListRow, .main-trackList-trackListHeaderRow') || n.querySelector?.(".main-trackList-trackListHeaderRow")))) {
+        refresh(false);
+        return;
+      }
+    }
+  }).observe(document.body, { childList: true, subtree: true });
   window.addEventListener("resize", () => { clearTimeout(timer); timer = setTimeout(() => refresh(true), 200); });
   Platform.History.listen(() => setTimeout(() => refresh(true), 300));
   refresh(true);

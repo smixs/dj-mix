@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 — 2026-10-04
+
+- Year column no longer jitters: the column layout is a stylesheet rule that survives Spotify re-rendering rows, and missing cells are restored before the next frame is painted.
+
 ## 1.1.0 — 2026-10-04
 
 - "Year" column in every playlist: the release year of each track, right before the duration. Tracks from Spotify's "Recommended" block under a playlist have no year, because they are not in the playlist.
