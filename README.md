@@ -32,12 +32,16 @@ Sorting by key walks once around the wheel. Sorting by BPM gives you a flat line
 
 ```mermaid
 flowchart LR
-    A["Playlist ⋯ menu → DJ Mix"] --> B["Key + BPM from Spotify Mix data<br/>energy from Spotify audio features"]
-    B --> C["Annealing over key, arc, tempo, repeats"]
-    C --> D["New playlist: DJ Mix — name"]
+    A[Playlist menu: DJ Mix] --> B[Key and BPM from Spotify Mix data]
+    A --> E[Energy from Spotify audio features]
+    B --> C[Order: key, energy arc, tempo, repeats]
+    E --> C
+    C --> D[New playlist: DJ Mix - name]
 ```
 
-<img src="assets/screenshot-menu.webp" width="49%" alt="DJ Mix in the playlist context menu"> <img src="assets/screenshot-result.webp" width="49%" alt="The new DJ Mix playlist with the done notification">
+![DJ Mix in the playlist context menu](assets/screenshot-menu.webp)
+
+![The new DJ Mix playlist and the done notification](assets/screenshot-result.webp)
 
 ## Install
 
@@ -63,7 +67,7 @@ spicetify apply
 
 ## Use
 
-Right-click a playlist (or press `⋯`), choose **DJ Mix**. A new playlist **DJ Mix — <name>** opens when it is ready; 381 tracks take about 3 seconds.
+Right-click a playlist (or press `⋯`), choose **DJ Mix**. A new playlist **DJ Mix — `name`** opens when it is ready; 381 tracks take about 3 seconds.
 
 ## Develop
 
